@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 import { Header } from './layout/header/header';
 import { Footer } from './layout/footer/footer';
 import { Sidebar } from './layout/sidebar/sidebar';
@@ -7,12 +8,24 @@ import { Sidebar } from './layout/sidebar/sidebar';
 @Component({
   selector: 'app-root',
   standalone: true,
-  // Phai khai bao du 4 thu nay trong imports vi Angular 22 dung standalone
-  // component (khong con NgModule trung gian de "dang ky" component nua).
-  // Neu thieu 1 cai nao trong day, Angular se bao loi khong nhan dien duoc
-  // the <app-header>/<app-footer>/<app-sidebar>/<router-outlet> trong HTML.
   imports: [RouterOutlet, Header, Footer, Sidebar],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {}
+export class App {
+  private router = inject(Router);
+  private authRoutes = ['/login', '/register'];
+
+  // true = dang o trang can hien day du header/sidebar/footer (app shell)
+  // false = dang o trang login/register, chi hien noi dung chinh giua man hinh
+  showShell = signal(true);
+
+  constructor() {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        const url = (event as NavigationEnd).urlAfterRedirects;
+        this.showShell.set(!this.authRoutes.some((r) => url.startsWith(r)));
+      });
+  }
+}

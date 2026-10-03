@@ -83,3 +83,4 @@ CREATE TABLE comments (
                           CONSTRAINT fk_comment_post FOREIGN KEY (post_id) REFERENCES posts(id),
                           CONSTRAINT fk_comment_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
+

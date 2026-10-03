@@ -32,6 +32,17 @@ public class User {
     @Column(nullable = false, length = 20)
     private String role;
 
-    @Column(name = "created_at", insertable = false, updatable = false)
+    // Bo "insertable = false": gio Java tu set gia tri nay truoc khi luu,
+    // khong con dua vao SQL Server DEFAULT GETDATE() nua.
+    // Van giu "updatable = false" de khong ai vo tinh sua ngay tao sau nay.
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    // Chay TU DONG ngay truoc khi Hibernate INSERT dong moi xuong DB.
+    // Tu dien ngay gio hien tai vao createdAt - khong phu thuoc cu phap
+    // rieng cua tung ban Hibernate nhu @Generated tung bi loi.
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }
