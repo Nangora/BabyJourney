@@ -1,0 +1,129 @@
+<app-auth-layout
+  badge="Cùng biến nó thành của bạn"
+  heading="Một hành trình riêng của bạn."
+  subtitle="Vài lựa chọn đơn giản giúp chúng tôi gợi ý bài học và hoạt động phù hợp với giai đoạn thai kỳ của bạn."
+  image="images/onboarding-hero.png"
+  caption="Chỉ chia sẻ những gì bạn thấy thoải mái. Bạn có thể thay đổi hồ sơ bất cứ lúc nào."
+>
+  <button top type="button" class="top-link" (click)="saveAndExit()">Lưu & thoát</button>
+
+  <div class="auth-card">
+    <p class="step-label">
+      Bước {{ step() }} / 3 •
+      {{ step() === 1 ? 'Thời điểm của bạn' : step() === 2 ? 'Mục tiêu của bạn' : 'Sở thích của bạn' }}
+    </p>
+    <div class="progress">
+      <span [class.on]="step() >= 1"></span>
+      <span [class.on]="step() >= 2"></span>
+      <span [class.on]="step() >= 3"></span>
+    </div>
+
+    @if (step() === 1) {
+      <h1>Bạn đang ở đâu trong hành trình?</h1>
+      <p class="subtitle">Chúng tôi dùng thời điểm này để gợi ý nội dung theo tuần thai của bạn.</p>
+
+      <div class="seg">
+        <button type="button" [class.on]="mode() === 'due'" (click)="mode.set('due')">Ngày dự sinh</button>
+        <button type="button" [class.on]="mode() === 'week'" (click)="mode.set('week')">Tuần thai hiện tại</button>
+      </div>
+
+      <div class="auth-form" style="margin-top: 18px">
+        @if (mode() === 'due') {
+          <label>
+            Ngày dự sinh (ước tính)
+            <input type="date" [value]="dueDate()" (input)="onDue($event)" />
+            <span class="field-hint">Ước tính cũng được. Bạn có thể cập nhật sau.</span>
+          </label>
+        } @else {
+          <label>
+            Tuần thai hiện tại (1 – 42)
+            <input type="number" min="1" max="42" [value]="weekInput() ?? ''" (input)="onWeek($event)" placeholder="Ví dụ: 24" />
+          </label>
+        }
+      </div>
+
+      @if (week() !== null) {
+        <div class="info-card">
+          <h3>Bạn đang ở khoảng tuần {{ week() }}</h3>
+          <p>{{ trimesterText() }} • Tính đến ngày {{ todayText }}. Nội dung gợi ý sẽ bắt đầu từ đây.</p>
+        </div>
+      }
+
+      <p class="privacy-note">Chưa chắc ngày dự sinh? Hãy chọn "Tuần thai hiện tại". Đội ngũ chăm sóc có thể giúp bạn xác nhận.</p>
+
+      <div class="stack" style="margin-top: 16px">
+        <button type="button" class="btn-primary" [disabled]="week() === null" (click)="next()">Tiếp tục</button>
+        <button type="button" class="link-btn" style="text-align: left" (click)="later()">Tôi sẽ bổ sung sau →</button>
+      </div>
+      <p class="privacy-note">🔒 Hồ sơ của bạn được giữ riêng tư. Không cần tiền sử bệnh.</p>
+    }
+
+    @if (step() === 2) {
+      <h1>Bạn muốn có thêm điều gì?</h1>
+      <p class="subtitle">Chọn bất kỳ mục tiêu nào bạn thấy phù hợp. Không có đáp án sai.</p>
+
+      <div class="choices">
+        @for (g of goalOptions; track g.key) {
+          <label class="choice" [class.on]="goals().includes(g.key)">
+            <span class="ic">{{ g.icon }}</span>
+            <span class="tx">{{ g.title }}<small>{{ g.desc }}</small></span>
+            <input type="checkbox" [checked]="goals().includes(g.key)" (change)="toggle(goals, g.key)" />
+          </label>
+        }
+      </div>
+
+      <button type="button" class="btn-primary" (click)="next()">Tiếp tục</button>
+      <div class="actions">
+        <button type="button" class="link-btn" (click)="back()">← Quay lại</button>
+        <button type="button" class="link-btn" (click)="next()">Bỏ qua lúc này</button>
+      </div>
+      <p class="privacy-note">🔒 Hồ sơ của bạn được giữ riêng tư. Không cần tiền sử bệnh.</p>
+    }
+
+    @if (step() === 3) {
+      <h1>Một nhịp điệu hợp với bạn</h1>
+      <p class="subtitle">Chọn vài sở thích rồi bắt đầu. Tất cả đều là tuỳ chọn.</p>
+
+      <p class="section-title">Bạn thấy thoải mái với bao nhiêu thời gian mỗi ngày?</p>
+      <div class="seg">
+        @for (m of minuteOptions; track m) {
+          <button type="button" [class.on]="minutes() === m" (click)="minutes.set(m)">{{ m }} phút</button>
+        }
+      </div>
+
+      <p class="section-title">Tôi thích học qua</p>
+      <div class="stack">
+        @for (s of styleOptions; track s.key) {
+          <label class="check">
+            <input type="checkbox" [checked]="styles().includes(s.key)" (change)="toggle(styles, s.key)" />
+            {{ s.label }}
+          </label>
+        }
+        <label class="check">
+          <input type="checkbox" [checked]="reminder()" (change)="reminder.set(!reminder())" />
+          Gửi email nhắc nhở nhẹ nhàng mỗi ngày
+        </label>
+      </div>
+      <p class="privacy-note">Nhắc nhở đang tắt. Bạn luôn là người quyết định.</p>
+
+      <div class="summary">
+        <h3>Hành trình của bạn, trong một cái nhìn</h3>
+        Tuần {{ week() }} • Dự sinh {{ dueText() }}<br />
+        {{ goalsText() }}<br />
+        {{ minutes() ?? 0 }} phút mỗi ngày @if (stylesText()) { • {{ stylesText() }} }<br />
+        <button type="button" class="link-btn" (click)="step.set(1)">Chỉnh sửa lựa chọn →</button>
+      </div>
+
+      @if (error()) {
+        <div class="form-error" style="margin-bottom: 12px">{{ error() }}</div>
+      }
+
+      <button type="button" class="btn-primary" [disabled]="loading()" (click)="next()">
+        {{ loading() ? 'Đang lưu...' : 'Đến trang chính của tôi' }}
+      </button>
+      <div class="actions">
+        <button type="button" class="link-btn" (click)="back()">← Quay lại</button>
+      </div>
+    }
+  </div>
+</app-auth-layout>

@@ -1,0 +1,120 @@
+<div class="wrap">
+  <h1>Những khoảnh khắc nhỏ, cùng nhau</h1>
+  <p class="sub">Hoạt động để kết nối, thư giãn và chăm sóc bản thân một chút.</p>
+
+  <div class="chips" role="group" aria-label="Lọc theo nhóm hoạt động">
+    <button type="button" [class.on]="!category() && !savedOnly()" (click)="setCategory('')">Tất cả hoạt động</button>
+    @for (c of categories; track c.key) {
+      <button type="button" [class.on]="category() === c.key" (click)="setCategory(c.key)">{{ c.label }}</button>
+    }
+  </div>
+
+  <div class="layout">
+    <section>
+      <h2>
+        @if (savedOnly()) { Hoạt động đã lưu }
+        @else if (week()) { Gợi ý cho tuần {{ week() }} }
+        @else { Gợi ý cho bạn }
+      </h2>
+
+      @if (loading()) {
+        <p class="empty">Đang tải...</p>
+      } @else {
+        <div class="cards">
+          @for (a of view(); track a.id) {
+            <div class="card" [class.sel]="a.id === selectedId()" (click)="select(a)">
+              <div class="top">
+                <span class="ico" [attr.data-tone]="cat(a.category)?.tone">
+                  <app-icon [name]="cat(a.category)?.icon ?? 'sparkle'" [size]="20" />
+                </span>
+                <button type="button" class="heart" [class.on]="a.saved"
+                        [attr.aria-label]="a.saved ? 'Bỏ lưu hoạt động' : 'Lưu hoạt động'"
+                        [attr.aria-pressed]="a.saved" (click)="toggleSave(a, $event)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" [attr.fill]="a.saved ? 'currentColor' : 'none'"
+                       stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>
+                  </svg>
+                </button>
+              </div>
+              <small class="cat">{{ cat(a.category)?.label }}</small>
+              <h3>{{ a.title }}</h3>
+              <p class="meta">{{ meta(a) }}</p>
+              <button type="button" class="cta" (click)="select(a); $event.stopPropagation()">
+                @if (a.id === selectedId()) { Đã chọn • Xem chi tiết } @else { Khám phá hoạt động → }
+              </button>
+            </div>
+          } @empty {
+            <p class="empty">
+              @if (savedOnly()) { Bạn chưa lưu hoạt động nào. Bấm biểu tượng trái tim để lưu. }
+              @else { Chưa có hoạt động nào phù hợp. }
+            </p>
+          }
+
+          <div class="enough">
+            <h3>Hôm nay, vậy là đủ.</h3>
+            <p>Không cần một thói quen hoàn hảo. Năm phút yên tĩnh, hay một ngày nghỉ, đều là lựa chọn của bạn.</p>
+            <button type="button" class="cta" (click)="showSaved()">
+              {{ savedOnly() ? 'Xem tất cả hoạt động' : 'Xem hoạt động đã lưu (' + savedCount() + ') →' }}
+            </button>
+          </div>
+        </div>
+      }
+    </section>
+
+    <aside class="panel" aria-live="polite">
+      @if (detail(); as d) {
+        <div class="pimg">
+          @if (d.thumbnailUrl) {
+            <img [src]="d.thumbnailUrl" alt="" (error)="$any($event.target).style.display = 'none'" />
+          }
+        </div>
+        <span class="tag">{{ cat(d.category)?.label }} • ĐÃ CHỌN</span>
+        <h2>{{ d.title }}</h2>
+        <p class="pmeta">{{ detailMeta(d) }}@if (week()) { <br />Gợi ý cho tuần {{ week() }} }</p>
+        <p class="pdesc">{{ d.description }}</p>
+
+        @if (d.format === 'AUDIO') {
+          <div class="player">
+            <b>{{ d.title }}</b>
+            <div class="bar" role="progressbar" [attr.aria-valuenow]="pct()" aria-valuemin="0" aria-valuemax="100">
+              <span [style.width.%]="pct()"></span>
+            </div>
+            <div class="prow">
+              <small>{{ fmt(cur()) }}</small>
+              <button type="button" class="play" (click)="togglePlay()" [disabled]="audioError()"
+                      [attr.aria-label]="playing() ? 'Tạm dừng' : 'Phát'">
+                @if (playing()) {
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+                } @else {
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                }
+              </button>
+              <small>{{ fmt(totalSeconds()) }}</small>
+            </div>
+            <small class="status">{{ statusText() }}</small>
+          </div>
+        }
+
+        @if (steps().length) {
+          <h3>Làm theo cách của bạn</h3>
+          <ol>
+            @for (s of steps(); track $index) { <li>{{ s }}</li> }
+          </ol>
+        }
+
+        <button type="button" class="btn btn-solid full" (click)="complete()"
+                [disabled]="busy() || doneToday().includes(d.id)">
+          {{ doneToday().includes(d.id) ? 'Đã ghi nhận hôm nay ✓' : 'Đánh dấu hoàn thành' }}
+        </button>
+        <button type="button" class="btn btn-light full" (click)="toggleSave(d)">
+          {{ d.saved ? 'Đã lưu ✓' : 'Lưu hoạt động' }}
+        </button>
+        <p class="foot">Bạn có thể tạm dừng hoặc dừng bất cứ lúc nào. Nếu có điều gì không thoải mái, hãy chọn hoạt động khác.</p>
+      } @else {
+        <p class="empty">Chọn một hoạt động để xem chi tiết.</p>
+      }
+    </aside>
+  </div>
+
+  <p class="disclaimer">Chúng tôi giúp bạn học hỏi, không thay thế đội ngũ chăm sóc của bạn. Hãy hỏi bác sĩ về lời khuyên phù hợp với bạn.</p>
+</div>

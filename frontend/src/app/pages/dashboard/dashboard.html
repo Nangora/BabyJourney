@@ -1,0 +1,100 @@
+<div class="wrap">
+  <h1>{{ greeting }}, {{ firstName() }}</h1>
+  <p class="sub">Một chút học hỏi. Một chút kết nối. Một ngày theo nhịp của bạn.</p>
+  <p class="notice"><app-icon name="info" [size]="14" /> Một số nội dung bên dưới là minh hoạ cho đến khi thư viện được hoàn thiện.</p>
+
+  @if (profile() === undefined) {
+    <p class="sub">Đang tải...</p>
+  } @else if (profile() === null) {
+    <section class="empty">
+      <h2>Hãy cho chúng tôi biết về thai kỳ của bạn</h2>
+      <p>Chỉ mất một phút để chúng tôi gợi ý nội dung đúng với tuần thai của bạn.</p>
+      <a class="btn btn-solid" routerLink="/onboarding">Thiết lập hồ sơ</a>
+    </section>
+  } @else {
+    <section class="hero">
+      <div class="hero-text">
+        <span class="chip">{{ trimesterText() }}</span>
+        <h2>Xin chào, tuần {{ week() }}</h2>
+        <p class="lead">{{ heroText() }}</p>
+        <p class="meta">Dự sinh {{ dueText() }} • Còn khoảng {{ weeksLeft() }} tuần</p>
+        <a class="more" routerLink="/education">Khám phá tuần này →</a>
+      </div>
+      <img class="hero-img" src="images/dashboard-week.png" alt="" (error)="$any($event.target).style.display = 'none'" />
+    </section>
+
+    <div class="cols">
+      <div class="col-main">
+        <section class="card">
+          <h3>Kế hoạch nhẹ nhàng cho hôm nay</h3>
+          <p class="hint">Mỗi bước nhỏ đều có ý nghĩa. Chọn điều bạn thấy dễ chịu.</p>
+          <ul class="plan">
+            @for (item of plan; track item.title) {
+              <li>
+                <app-icon [name]="item.icon" [size]="20" />
+                <div class="txt"><b>{{ item.title }}</b><small>{{ item.meta }}</small></div>
+                <a class="pill" [class.progress]="item.state === 'progress'" routerLink="/education">{{ item.action }}</a>
+              </li>
+            }
+          </ul>
+        </section>
+
+        <h3 class="sec">Được chọn cho tuần của bạn</h3>
+        <div class="picks">
+          @for (p of picks; track p.title) {
+            <article class="pick">
+              <div class="thumb"><img [src]="p.img" [alt]="p.title" (error)="$any($event.target).style.display = 'none'" /></div>
+              <small>{{ p.meta }}</small>
+              <b>{{ p.title }}</b>
+              <a class="more" routerLink="/education">{{ p.link }}</a>
+            </article>
+          }
+        </div>
+      </div>
+
+      <div class="col-side">
+        <section class="card">
+          <h3>Bạn cảm thấy thế nào?</h3>
+          <p class="hint">Mọi cảm xúc đều có chỗ của nó.</p>
+          <div class="moods" role="group" aria-label="Tâm trạng hôm nay">
+            @for (m of moods; track m.key) {
+              <button type="button" [class.on]="mood() === m.key" [attr.aria-pressed]="mood() === m.key" (click)="pickMood(m.key)">
+                <span class="e">{{ m.emoji }}</span>{{ m.label }}
+              </button>
+            }
+          </div>
+          @if (mood()) {
+            <p class="hint">Đã chọn: {{ moodLabel() }} • <a class="more" routerLink="/journal">Thêm ghi chú vào nhật ký →</a></p>
+          }
+        </section>
+
+        <section class="card week-card">
+          <h3>Tuần này của bạn, nhẹ nhàng</h3>
+          <div class="prog">
+            <div class="row"><span>Khoảnh khắc học tập</span><small>3 / 5 bài đã khám phá</small></div>
+            <div class="bar"><span style="width: 60%"></span></div>
+          </div>
+          <div class="prog">
+            <div class="row"><span>Thực hành hằng ngày</span><small>4 / 7 ngày • Không áp lực chuỗi ngày</small></div>
+            <div class="bar"><span style="width: 57%"></span></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="chip">Sắp tới</span>
+          @if (next(); as a) {
+            <h3 class="appt">Khám với {{ a.doctorName }}</h3>
+            <p class="hint">{{ whenText(a.appointmentTime) }}@if (a.clinicName) { • {{ a.clinicName }} }</p>
+            @if (a.notes) { <p class="hint">{{ a.notes }}</p> }
+          } @else {
+            <h3 class="appt">Chưa có lịch hẹn</h3>
+            <p class="hint">Khi bạn đặt lịch khám, lịch hẹn gần nhất sẽ hiện ở đây.</p>
+          }
+          <a class="more" routerLink="/schedule">Xem lịch →</a>
+        </section>
+      </div>
+    </div>
+  }
+
+  <p class="disclaimer"><app-icon name="info" [size]="14" /> Chúng tôi giúp bạn học hỏi, không thay thế đội ngũ chăm sóc của bạn. Hãy hỏi bác sĩ về lời khuyên phù hợp với bạn.</p>
+</div>

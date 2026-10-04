@@ -19,30 +19,36 @@ public class JwtService {
     private long expirationMs;
 
     private SecretKey getSigningKey() {
-        // Chuyen chuoi secret thanh khoa HMAC-SHA, dung de ky va kiem tra chu ky token
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // Tao token chua userId (subject) va email, het han sau expirationMs
-    public String generateToken(Long userId, String email) {
+    public String generateToken(Long userId, String email, int tokenVersion) {
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + expirationMs);
         return Jwts.builder()
                 .subject(String.valueOf(userId))
                 .claim("email", email)
+                .claim("ver", tokenVersion)
                 .issuedAt(now)
-                .expiration(expiry)
+                .expiration(new Date(now.getTime() + expirationMs))
                 .signWith(getSigningKey())
                 .compact();
     }
 
-    // Giai ma token, tra ve userId neu hop le; tu dong nem loi neu token gia/het han
-    public Long extractUserId(String token) {
-        Claims claims = Jwts.parser()
+    // Ném lỗi nếu token giả / hết hạn
+    public Claims parse(String token) {
+        return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-        return Long.valueOf(claims.getSubject());
+    }
+
+    public Long extractUserId(String token) {
+        return Long.valueOf(parse(token).getSubject());
+    }
+
+    public int extractVersion(Claims claims) {
+        Integer v = claims.get("ver", Integer.class);
+        return v == null ? 0 : v;
     }
 }

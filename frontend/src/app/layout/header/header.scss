@@ -1,0 +1,60 @@
+.site {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.bar { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 68px; }
+
+.brand {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 22px; font-weight: 500; color: var(--ink); text-decoration: none;
+  app-icon { color: var(--primary); }
+}
+
+.nav {
+  display: flex; gap: 28px;
+  a { font-size: 14px; color: var(--ink); text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
+  a:hover, a.active { color: var(--primary); }
+  a.active { border-bottom-color: var(--primary); font-weight: 600; }
+}
+
+.account { display: flex; align-items: center; gap: 18px; }
+.login { font-size: 14px; color: var(--ink); text-decoration: none; }
+.login:hover { color: var(--primary); }
+
+.user {
+  position: relative;
+  summary {
+    list-style: none; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--ink);
+    padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: #fff;
+    max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  summary::-webkit-details-marker { display: none; }
+  .menu {
+    position: absolute; right: 0; top: calc(100% + 8px); min-width: 210px;
+    display: flex; flex-direction: column; padding: 8px;
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: 0 12px 28px rgba(31, 61, 54, .12);
+  }
+  .menu a, .menu button {
+    padding: 10px 12px; border-radius: 8px; border: 0; background: none; text-align: left;
+    font: inherit; font-size: 14px; color: var(--ink); text-decoration: none; cursor: pointer;
+  }
+  .menu a:hover, .menu button:hover { background: var(--tint); }
+}
+
+.burger { display: none; border: 1px solid var(--line); background: #fff; border-radius: 10px; width: 40px; height: 40px; font-size: 18px; cursor: pointer; }
+
+@media (max-width: 900px) {
+  .burger { display: inline-flex; align-items: center; justify-content: center; order: 3; }
+  .account { margin-left: auto; order: 2; }
+  .nav {
+    display: none; position: absolute; left: 0; right: 0; top: 100%;
+    flex-direction: column; gap: 4px; padding: 12px 20px 16px;
+    background: var(--bg); border-bottom: 1px solid var(--line);
+  }
+  .nav.open { display: flex; }
+}

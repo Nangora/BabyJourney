@@ -1,18 +1,19 @@
-<div class="auth-page">
+<app-auth-layout>
   <div class="auth-card">
-    <div class="auth-logo">
-      <div class="logo-mark">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.8 9 2.2 5.5 5.5 5c2-.3 3.6.7 4.5 2 .9-1.3 2.5-2.3 4.5-2 3.3.5 4.7 4 3 7.5C19 16.65 12 21 12 21z"/></svg>
-      </div>
-      <span class="logo-text">BabyJourney</span>
-    </div>
-
     <h1>Chào mừng trở lại</h1>
-    <p class="subtitle">Đăng nhập để tiếp tục hành trình của bạn</p>
+    <p class="subtitle">Một ngày mới. Thêm một chút đồng hành.</p>
+
+    @if (notice()) {
+      <div class="form-notice">{{ notice() }}</div>
+    }
+
+    <app-google-button text="continue_with" (failed)="errorMessage.set($event)" />
+
+    <div class="divider">hoặc đăng nhập bằng email</div>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
       <label>
-        <span>Email</span>
+        Email
         <input type="email" formControlName="email" placeholder="ban@email.com" />
         @if (form.controls.email.invalid && form.controls.email.touched) {
           <span class="field-error">Vui lòng nhập email hợp lệ</span>
@@ -20,12 +21,20 @@
       </label>
 
       <label>
-        <span>Mật khẩu</span>
-        <input type="password" formControlName="password" placeholder="••••••••" />
+        Mật khẩu
+        <input type="password" formControlName="password" placeholder="Nhập mật khẩu" />
         @if (form.controls.password.invalid && form.controls.password.touched) {
-          <span class="field-error">Mật khẩu tối thiểu 6 ký tự</span>
+          <span class="field-error">Vui lòng nhập mật khẩu</span>
         }
       </label>
+
+      <div class="row-between">
+        <label class="check">
+          <input type="checkbox" formControlName="remember" />
+          Ghi nhớ đăng nhập
+        </label>
+        <a routerLink="/forgot-password" class="link-btn">Quên mật khẩu?</a>
+      </div>
 
       @if (errorMessage()) {
         <div class="form-error">{{ errorMessage() }}</div>
@@ -36,8 +45,11 @@
       </button>
     </form>
 
-    <p class="auth-footer">
-      Chưa có tài khoản? <a routerLink="/register">Đăng ký ngay</a>
-    </p>
+    <p class="auth-switch">Mới đến BabyJourney? <a routerLink="/register">Đăng ký →</a></p>
+
+    <div class="info-box">
+      <strong>Tiếp tục từ nơi bạn dừng lại.</strong>
+      Bài học, hoạt động đã lưu và nhật ký của bạn vẫn ở đây khi bạn quay lại.
+    </div>
   </div>
-</div>
+</app-auth-layout>

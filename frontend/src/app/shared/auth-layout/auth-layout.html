@@ -1,0 +1,29 @@
+<div class="shell">
+  <header class="top">
+    <a routerLink="/" class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 21v-9"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 16c0-3-2-5-6-5 0 3 2 5 6 5z"/>
+      </svg>
+      <span>BabyJourney</span>
+    </a>
+    <ng-content select="[top]">
+      <a routerLink="/" class="back">← Về trang chủ</a>
+    </ng-content>
+  </header>
+
+  <main class="grid">
+    <section class="hero">
+      <span class="badge">{{ badge() }}</span>
+      <h2>{{ heading() }}</h2>
+      <p class="lead">{{ subtitle() }}</p>
+      <div class="art">
+        <img [src]="image()" alt="" (error)="$any($event.target).style.display = 'none'" />
+      </div>
+      <p class="caption">{{ caption() }}</p>
+    </section>
+
+    <section class="panel"><ng-content /></section>
+  </main>
+
+  <footer class="foot">Chính sách bảo mật · Điều khoản dịch vụ · © 2026 BabyJourney</footer>
+</div>

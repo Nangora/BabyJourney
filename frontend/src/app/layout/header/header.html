@@ -1,1 +1,38 @@
-<p>header works!</p>
+<header class="site">
+  <div class="container bar">
+    <a routerLink="/" class="brand">
+      <app-icon name="sprout" [size]="24" />
+      <span>BabyJourney</span>
+    </a>
+
+    <button class="burger" type="button" aria-label="Mở menu" (click)="open.set(!open())">☰</button>
+
+    <nav class="nav" [class.open]="open()" (click)="open.set(false)">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Trang chủ</a>
+      <a routerLink="/" fragment="journey">Kiến thức thai kỳ</a>
+      <a routerLink="/" fragment="activities">Hoạt động</a>
+      <a routerLink="/" fragment="articles">Bài viết</a>
+      <a routerLink="/" fragment="approach">Về chúng tôi</a>
+      @if (auth.currentUser()) {
+        <a routerLink="/dashboard" routerLinkActive="active">Bảng điều khiển</a>
+      }
+    </nav>
+
+    <div class="account">
+      @if (auth.currentUser(); as user) {
+        <details #menu class="user">
+          <summary>{{ user.fullName }}</summary>
+          <div class="menu" (click)="menu.open = false">
+            <a routerLink="/dashboard">Bảng điều khiển</a>
+            <a routerLink="/profile">Thông tin tài khoản</a>
+            <a routerLink="/change-password">Đổi mật khẩu</a>
+            <button type="button" (click)="logout()">Đăng xuất</button>
+          </div>
+        </details>
+      } @else if (!checking()) {
+        <a routerLink="/login" class="login">Đăng nhập</a>
+        <a routerLink="/register" class="btn btn-solid">Đăng ký</a>
+      }
+    </div>
+  </div>
+</header>

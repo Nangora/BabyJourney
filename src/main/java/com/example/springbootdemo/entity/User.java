@@ -2,6 +2,7 @@ package com.example.springbootdemo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,15 +33,22 @@ public class User {
     @Column(nullable = false, length = 20)
     private String role;
 
-    // Bo "insertable = false": gio Java tu set gia tri nay truoc khi luu,
-    // khong con dua vao SQL Server DEFAULT GETDATE() nua.
-    // Van giu "updatable = false" de khong ai vo tinh sua ngay tao sau nay.
+    // false = tài khoản bị vô hiệu hóa, không được đăng nhập
+    @Builder.Default
+    @Column(name = "is_active", nullable = false)
+    private boolean active = true;
+
+    // Tăng lên khi đăng xuất / đổi mật khẩu / reset mật khẩu -> mọi token cũ mất hiệu lực
+    @Builder.Default
+    @Column(name = "token_version", nullable = false)
+    private int tokenVersion = 0;
+
+    @Column(name = "google_id", length = 100)
+    private String googleId;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // Chay TU DONG ngay truoc khi Hibernate INSERT dong moi xuong DB.
-    // Tu dien ngay gio hien tai vao createdAt - khong phu thuoc cu phap
-    // rieng cua tung ban Hibernate nhu @Generated tung bi loi.
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

@@ -1,0 +1,51 @@
+<div class="app">
+  <header class="top">
+    <div class="left">
+      <button class="burger" type="button" aria-label="Mở menu" (click)="navOpen.set(!navOpen())">☰</button>
+      <a routerLink="/" class="brand"><app-icon name="sprout" [size]="24" /><span>BabyJourney</span></a>
+    </div>
+
+    <div class="right">
+      @if (p(); as prof) {
+        <span class="stage">Tuần {{ prof.currentWeek }} • {{ trimesterText() }}</span>
+      }
+      <button type="button" class="icon-btn" aria-label="Thông báo" title="Chưa có thông báo">
+        <app-icon name="bell" [size]="20" />
+      </button>
+
+      <details #menu class="avatar-menu">
+        <summary aria-label="Tài khoản">{{ initial() }}</summary>
+        <div class="menu" (click)="menu.open = false">
+          <p class="who">{{ auth.currentUser()?.fullName }}<small>{{ auth.currentUser()?.email }}</small></p>
+          <a routerLink="/profile">Thông tin tài khoản</a>
+          <a routerLink="/change-password">Đổi mật khẩu</a>
+          <button type="button" (click)="logout()">Đăng xuất</button>
+        </div>
+      </details>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="side" [class.open]="navOpen()" (click)="navOpen.set(false)">
+      <nav>
+        @for (n of nav; track n.path) {
+          <a [routerLink]="n.path" routerLinkActive="active">
+            <app-icon [name]="n.icon" [size]="18" />{{ n.label }}
+          </a>
+        }
+      </nav>
+
+      @if (p(); as prof) {
+        <div class="mini">
+          <strong>Ngày mai bé nhỏ của bạn</strong>
+          <p>{{ prof.currentWeek }} tuần hôm nay<br />Dự sinh {{ dueText() }}</p>
+          <a routerLink="/onboarding">Chỉnh sửa hồ sơ thai kỳ →</a>
+        </div>
+      }
+
+      <p class="foot-links"><a routerLink="/profile">Cài đặt</a> · <a routerLink="/help">Trợ giúp & hỗ trợ</a></p>
+    </aside>
+
+    <main class="main"><router-outlet /></main>
+  </div>
+</div>

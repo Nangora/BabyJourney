@@ -1,0 +1,177 @@
+<!-- Hero -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="pill">Chăm sóc cho ngày mai nhỏ bé của bạn</span>
+      <h1>Thai kỳ khoẻ mạnh bắt đầu từ hiểu biết</h1>
+      <p class="lead">
+        Kiến thức thai giáo cá nhân hoá, hoạt động nhẹ nhàng và nguồn tham khảo chu đáo,
+        đồng hành cùng bạn qua từng tuần của thai kỳ.
+      </p>
+      <div class="actions">
+        <a class="btn btn-solid" [routerLink]="cta()">{{ ctaLabel() }}</a>
+        <a class="btn btn-light" routerLink="/" fragment="journey">Khám phá kiến thức</a>
+      </div>
+      <p class="fine">Miễn phí để bắt đầu • Theo từng tuần thai • Theo nhịp của bạn</p>
+    </div>
+
+    <div class="hero-art">
+      <img src="images/landing-hero.png" alt="Hai người phụ nữ mang thai trò chuyện trong phòng khách ấm áp"
+           (error)="$any($event.target).style.display = 'none'" />
+      <div class="float">
+        <span class="tag">Từng tuần</span>
+        <span>Mỗi ngày học một chút, tự tin thêm một chút.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dải giá trị -->
+<section class="strip">
+  <div class="container strip-grid">
+    @for (s of strip; track s.title) {
+      <div><strong>{{ s.title }}</strong><p>{{ s.text }}</p></div>
+    }
+  </div>
+</section>
+
+<!-- Hành trình theo tam cá nguyệt -->
+<section id="journey" class="block">
+  <div class="container">
+    <p class="eyebrow">Mỗi giai đoạn đều quan trọng</p>
+    <h2 class="h-section">Hành trình thai kỳ của bạn</h2>
+    <p class="p-section">Tìm một chút rõ ràng cho giai đoạn bạn đang ở, và một lời dẫn nhẹ nhàng cho điều sắp tới.</p>
+
+    <div class="grid-3">
+      @for (t of trimesters; track t.title) {
+        <article class="card" [class]="'card tone-' + t.tone">
+          <app-icon [name]="t.icon" [size]="28" />
+          <span class="chip">{{ t.weeks }}</span>
+          <h3>{{ t.title }}</h3>
+          <p>{{ t.text }}</p>
+          <a class="more" [routerLink]="cta()">Khám phá giai đoạn này →</a>
+        </article>
+      }
+    </div>
+
+    <h2 class="h-section sub-gap">Một khởi đầu dịu dàng mỗi ngày</h2>
+    <div class="grid-3 steps">
+      @for (s of steps; track s.no) {
+        <div>
+          <span class="no">{{ s.no }}</span>
+          <h3>{{ s.title }}</h3>
+          <p>{{ s.text }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Hoạt động -->
+<section id="activities" class="block">
+  <div class="container">
+    <p class="eyebrow">Khoảnh khắc nhỏ, kết nối ý nghĩa</p>
+    <h2 class="h-section">Chút thời gian cho bạn và bé</h2>
+    <p class="p-section">Không cần lịch trình hoàn hảo. Chọn điều bạn thấy phù hợp hôm nay.</p>
+
+    <div class="grid-5">
+      @for (a of activities; track a.title) {
+        <a class="card act" [class]="'card act tone-' + a.tone" [routerLink]="cta()">
+          <app-icon [name]="a.icon" [size]="26" />
+          <h3>{{ a.title }}</h3>
+          <p>{{ a.meta }}</p>
+          <span class="more">Khám phá →</span>
+        </a>
+      }
+    </div>
+    <a class="btn btn-light gap-top" [routerLink]="cta()">Xem tất cả hoạt động</a>
+  </div>
+</section>
+
+<!-- Xem thử bảng điều khiển -->
+<section class="block">
+  <div class="container">
+    <div class="preview">
+      <div>
+        <h2 class="h-section">Luôn đồng hành cùng bạn, từng tuần</h2>
+        <p class="p-section">
+          Bảng điều khiển gom bài học đúng lúc, kế hoạch nhẹ nhàng mỗi ngày và không gian để bạn lắng nghe chính mình.
+        </p>
+        <a class="btn btn-solid" [routerLink]="cta()">{{ ctaLabel() === 'Bắt đầu ngay' ? 'Tạo tài khoản miễn phí' : ctaLabel() }}</a>
+      </div>
+
+      <div class="today">
+        <span class="chip">Xem thử tuần 24</span>
+        <h3>Hôm nay, theo nhịp của bạn</h3>
+        <ul>
+          <li><b>Học</b><span>Giác quan đang phát triển của bé</span></li>
+          <li><b>Kết nối</b><span>Một bài hát cho bé yêu</span></li>
+          <li><b>Ghi lại</b><span>Hôm nay bạn cảm thấy thế nào?</span></li>
+        </ul>
+        <p class="note">Gợi ý minh hoạ, sẽ được cá nhân hoá theo giai đoạn của bạn.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Bài viết -->
+<section id="articles" class="block">
+  <div class="container">
+    <p class="eyebrow">Một chút kiến thức giúp ích nhiều</p>
+    <h2 class="h-section">Bài đọc hay cho hành trình</h2>
+    <p class="p-section">Giải thích nhẹ nhàng cho những câu hỏi trong lòng bạn.</p>
+
+    <div class="grid-3">
+      @for (a of articles; track a.title) {
+        <article class="article">
+          <div class="thumb">
+            <img [src]="a.img" [alt]="a.title" (error)="$any($event.target).style.display = 'none'" />
+          </div>
+          <p class="meta">{{ a.topic }} • {{ a.time }}</p>
+          <h3>{{ a.title }}</h3>
+          <a class="more" [routerLink]="cta()">Đọc bài viết →</a>
+        </article>
+      }
+    </div>
+    <a class="btn btn-light gap-top" [routerLink]="cta()">Xem tất cả bài viết</a>
+  </div>
+</section>
+
+<!-- Cách chúng tôi làm -->
+<section id="approach" class="block approach-wrap">
+  <div class="container approach">
+    <div>
+      <p class="eyebrow">Cách chúng tôi làm</p>
+      <h2 class="h-section">Bớt quá tải. Hiểu nhiều hơn.</h2>
+      <p class="p-section nm">Thai kỳ đi kèm rất nhiều câu hỏi. Chúng tôi tin việc học nên ấm áp, không gây áp lực.</p>
+      <p class="p-section">
+        BabyJourney là không gian để khám phá, xây dựng thói quen mỗi ngày và lắng nghe cảm xúc của bạn.
+        Chúng tôi tôn trọng mỗi gia đình, mỗi trải nghiệm và những lựa chọn thuộc về bạn.
+      </p>
+      <a class="more" routerLink="/" fragment="approach">Tìm hiểu về BabyJourney →</a>
+    </div>
+
+    <div class="support">
+      <h3>Hỗ trợ, không áp lực.</h3>
+      <ul>
+        @for (c of checklist; track c) {
+          <li><app-icon name="check" [size]="16" />{{ c }}</li>
+        }
+      </ul>
+      <p class="callout">
+        <app-icon name="info" [size]="16" />
+        <span>Chúng tôi giúp bạn học hỏi, không thay thế đội ngũ chăm sóc của bạn. Hãy hỏi bác sĩ về lời khuyên phù hợp với bạn.</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA cuối trang -->
+<section class="final">
+  <div class="container">
+    <h2>Chương tiếp theo bắt đầu từ một bước nhỏ.</h2>
+    <p>Dành chỗ cho việc học, kết nối và chăm sóc bản thân một chút.</p>
+    <a class="btn btn-solid" [routerLink]="cta()">{{ ctaLabel() }}</a>
+    <p class="fine">Tạo tài khoản miễn phí. Tìm nhịp của riêng bạn.</p>
+  </div>
+</section>

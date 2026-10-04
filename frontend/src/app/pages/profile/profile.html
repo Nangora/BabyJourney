@@ -1,0 +1,40 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <h1>Thông tin tài khoản</h1>
+
+    @if (successMessage()) {
+      <div class="form-notice">{{ successMessage() }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+      <label>
+        <span>Email</span>
+        <input type="email" [value]="auth.currentUser()?.email ?? ''" disabled />
+      </label>
+
+      <label>
+        <span>Họ và tên</span>
+        <input type="text" formControlName="fullName" />
+        @if (form.controls.fullName.invalid && form.controls.fullName.touched) {
+          <span class="field-error">Vui lòng nhập họ tên</span>
+        }
+      </label>
+
+      <label>
+        <span>Số điện thoại</span>
+        <input type="tel" formControlName="phone" placeholder="0901234567" />
+        @if (form.controls.phone.invalid && form.controls.phone.touched) {
+          <span class="field-error">Số điện thoại không hợp lệ</span>
+        }
+      </label>
+
+      @if (errorMessage()) {
+        <div class="form-error">{{ errorMessage() }}</div>
+      }
+
+      <button type="submit" class="btn-primary" [disabled]="loading()">
+        {{ loading() ? 'Đang lưu...' : 'Lưu thay đổi' }}
+      </button>
+    </form>
+  </div>
+</div>
