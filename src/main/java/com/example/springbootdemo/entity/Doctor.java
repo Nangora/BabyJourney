@@ -33,6 +33,10 @@ public class Doctor {
     @Column(name = "price_per_session", nullable = false, precision = 12, scale = 2)
     private BigDecimal pricePerSession;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 }

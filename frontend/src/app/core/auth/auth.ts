@@ -59,6 +59,14 @@ export interface MessageResponse {
 const API_BASE_URL = 'http://localhost:8080/api';
 const TOKEN_KEY = 'babyjourney_token';
 
+// Trang chủ theo vai trò: bác sĩ -> lịch khám, mẹ bầu -> bảng điều khiển, admin -> quản trị, còn lại -> cộng đồng
+export function homeFor(role: string | null | undefined): string {
+  if (role === 'DOCTOR') return '/doctor/appointments';
+  if (role === 'USER') return '/dashboard';
+  if (role === 'ADMIN') return '/admin';
+  return '/community';
+}
+
 @Injectable({ providedIn: 'root' })
 export class Auth {
   private http = inject(HttpClient);

@@ -86,7 +86,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // Expert endpoints
-                        .requestMatchers("/api/expert/**").hasAnyRole("EXPERT", "ADMIN")
+                        .requestMatchers("/api/expert/**").hasAnyRole("EXPERT", "DOCTOR", "ADMIN")
+
+                        // Doctor portal: bác sĩ quản lý lịch khám của chính mình
+                        .requestMatchers("/api/doctor/**").hasRole("DOCTOR")
+
+                        // Đặt lịch khám dành cho mẹ bầu
+                        .requestMatchers("/api/appointments/**").hasAnyRole("USER", "ADMIN")
 
                         // All other endpoints require authentication
                         .anyRequest().authenticated()

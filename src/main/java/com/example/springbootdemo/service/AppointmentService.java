@@ -39,7 +39,12 @@ public class AppointmentService {
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Khong tim thay bac si"));
 
-        boolean trung = appointmentRepository.existsByDoctor_IdAndAppointmentTimeAndStatusIn(
+        if (!doctorRepository.existsByIdAndUser_ActiveTrue(doctor.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Bac si chua nhan lich dat, vui long chon bac si khac");
+        }
+
+        boolean trung =appointmentRepository.existsByDoctor_IdAndAppointmentTimeAndStatusIn(
                 doctor.getId(), request.getAppointmentTime(), ACTIVE_STATUSES);
         if (trung) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
@@ -71,6 +76,7 @@ public class AppointmentService {
                 .appointmentTime(a.getAppointmentTime())
                 .status(a.getStatus())
                 .notes(a.getNotes())
+                .resultNotes(a.getResultNotes())
                 .createdAt(a.getCreatedAt())
                 .build();
     }

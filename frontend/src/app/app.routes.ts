@@ -11,6 +11,7 @@ import { Profile } from './pages/profile/profile';
 import { ChangePassword } from './pages/change-password/change-password';
 import { Onboarding } from './pages/onboarding/onboarding';
 import { authGuard } from './core/auth/auth-guard';
+import { roleGuard } from './core/auth/role-guard';
 import { Activities } from './pages/activities/activities';
 import { Education } from './pages/education/education';
 import { EducationDetail } from './pages/education/education-detail';
@@ -23,6 +24,9 @@ import { Settings } from './pages/settings/settings';
 import { BirthPrep } from './pages/birth-prep/birth-prep';
 import { Nutrition } from './pages/nutrition/nutrition';
 import { Gamification } from './pages/gamification/gamification';
+import { Community } from './pages/community/community';
+
+const mom = { canActivate: [roleGuard(['USER'])] };
 
 export const routes: Routes = [
   // Trang công khai: header + footer
@@ -34,17 +38,46 @@ export const routes: Routes = [
     component: MemberLayout,
     canActivate: [authGuard],
     children: [
-      { path: 'dashboard', component: Dashboard },
-      { path: 'education', component: Education },
-      { path: 'education/:id', component: EducationDetail },
-      { path: 'activities', component: Activities },
-      { path: 'schedule', component: Schedule },
-      { path: 'journal', component: Journal },
-      { path: 'health', component: Health },
-      { path: 'help', component: Help },
-      { path: 'birth-prep', component: BirthPrep },
-      { path: 'nutrition', component: Nutrition },
-      { path: 'gamification', component: Gamification },
+      // Tính năng của mẹ bầu
+      { path: 'dashboard', component: Dashboard, ...mom },
+      { path: 'education', component: Education, ...mom },
+      { path: 'education/:id', component: EducationDetail, ...mom },
+      { path: 'activities', component: Activities, ...mom },
+      { path: 'schedule', component: Schedule, ...mom },
+      { path: 'journal', component: Journal, ...mom },
+      { path: 'health', component: Health, ...mom },
+      { path: 'help', component: Help, ...mom },
+      { path: 'birth-prep', component: BirthPrep, ...mom },
+      { path: 'nutrition', component: Nutrition, ...mom },
+      { path: 'gamification', component: Gamification, ...mom },
+
+      // Bác sĩ: quản lý lịch khám của mình
+      {
+        path: 'doctor/appointments',
+        loadComponent: () =>
+          import('./pages/doctor-appointments/doctor-appointments').then((m) => m.DoctorAppointments),
+        canActivate: [roleGuard(['DOCTOR'])],
+      },
+
+      // Quản trị: chỉ ADMIN
+      {
+        path: 'admin',
+        loadComponent: () => import('./pages/admin/admin-overview').then((m) => m.AdminOverview),
+        canActivate: [roleGuard(['ADMIN'])],
+      },
+      {
+        path: 'admin/users',
+        loadComponent: () => import('./pages/admin/admin-users').then((m) => m.AdminUsers),
+        canActivate: [roleGuard(['ADMIN'])],
+      },
+      {
+        path: 'admin/doctors',
+        loadComponent: () => import('./pages/admin/admin-doctors').then((m) => m.AdminDoctors),
+        canActivate: [roleGuard(['ADMIN'])],
+      },
+
+      // Dùng chung mọi vai trò
+      { path: 'community', component: Community },
       { path: 'notifications', component: Notifications },
       { path: 'settings', component: Settings },
       { path: 'profile', component: Profile },
@@ -57,7 +90,7 @@ export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'forgot-password', component: ForgotPassword },
   { path: 'reset-password', component: ResetPassword },
-  { path: 'onboarding', component: Onboarding, canActivate: [authGuard] },
+  { path: 'onboarding', component: Onboarding, canActivate: [authGuard, roleGuard(['USER'])] },
 
   { path: '**', redirectTo: '' },
 ];

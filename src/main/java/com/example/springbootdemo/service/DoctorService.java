@@ -16,8 +16,8 @@ public class DoctorService {
 
     public List<DoctorResponse> getAll(String specialty) {
         List<Doctor> doctors = (specialty == null || specialty.isBlank())
-                ? doctorRepository.findAll()
-                : doctorRepository.findBySpecialtyContainingIgnoreCase(specialty);
+                ? doctorRepository.findByUser_ActiveTrue()
+                : doctorRepository.findBySpecialtyContainingIgnoreCaseAndUser_ActiveTrue(specialty);
 
         return doctors.stream().map(this::toResponse).toList();
     }

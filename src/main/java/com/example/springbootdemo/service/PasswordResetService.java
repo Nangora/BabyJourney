@@ -44,6 +44,8 @@ public class PasswordResetService {
     private long expirationMinutes;
     @Value("${app.mail.from}")
     private String mailFrom;
+    @Value("${app.invite.expiration-hours:72}")
+    private long inviteExpirationHours;
 
     private final SecureRandom random = new SecureRandom();
 
@@ -57,21 +59,32 @@ public class PasswordResetService {
         }
 
         userRepository.findByEmail(email).filter(User::isActive).ifPresent(user -> {
-            tokenRepository.invalidateAllForUser(user.getId());
-
-            byte[] bytes = new byte[32];
-            random.nextBytes(bytes);
-            String token = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-
-            tokenRepository.save(PasswordResetToken.builder()
-                    .user(user)
-                    .tokenHash(sha256(token))
-                    .expiresAt(LocalDateTime.now().plusMinutes(expirationMinutes))
-                    .used(false)
-                    .build());
-
+            String token = createToken(user, expirationMinutes);
             sendMail(user.getEmail(), frontendUrl + "/reset-password?token=" + token);
         });
+    }
+
+    // ---------- Mời bác sĩ: gửi link tự đặt mật khẩu lần đầu (dùng lại trang /reset-password) ----------
+    @Transactional
+    public void sendDoctorInvite(User user) {
+        String token = createToken(user, inviteExpirationHours * 60);
+        sendInviteMail(user.getEmail(), user.getFullName(), frontendUrl + "/reset-password?token=" + token);
+    }
+
+    private String createToken(User user, long ttlMinutes) {
+        tokenRepository.invalidateAllForUser(user.getId());
+
+        byte[] bytes = new byte[32];
+        random.nextBytes(bytes);
+        String token = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+
+        tokenRepository.save(PasswordResetToken.builder()
+                .user(user)
+                .tokenHash(sha256(token))
+                .expiresAt(LocalDateTime.now().plusMinutes(ttlMinutes))
+                .used(false)
+                .build());
+        return token;
     }
 
     // ---------- 5. Đặt lại mật khẩu ----------
@@ -101,6 +114,27 @@ public class PasswordResetService {
 
         t.setUsed(true);
         tokenRepository.save(t);
+    }
+
+    private void sendInviteMail(String to, String fullName, String link) {
+        // Log link để test local khi chưa cấu hình SMTP. XÓA dòng này khi lên production.
+        log.info("[DEV] Link đặt mật khẩu cho bác sĩ {}: {}", to, link);
+
+        JavaMailSender sender = mailSender.getIfAvailable();
+        if (sender == null) return;
+        try {
+            SimpleMailMessage msg = new SimpleMailMessage();
+            msg.setFrom(mailFrom);
+            msg.setTo(to);
+            msg.setSubject("BabyJourney - Kích hoạt tài khoản bác sĩ");
+            msg.setText("Xin chào " + fullName + ",\n\n"
+                    + "Tài khoản bác sĩ của bạn trên BabyJourney đã được tạo. "
+                    + "Nhấn vào liên kết sau để đặt mật khẩu (có hiệu lực " + inviteExpirationHours + " giờ):\n"
+                    + link + "\n\nNếu bạn không mong đợi email này, hãy bỏ qua.");
+            sender.send(msg);
+        } catch (Exception e) {
+            log.warn("Không gửi được email mời bác sĩ: {}", e.getMessage());
+        }
     }
 
     private void sendMail(String to, String link) {

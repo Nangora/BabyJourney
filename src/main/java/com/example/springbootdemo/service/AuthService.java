@@ -34,6 +34,10 @@ public class AuthService {
         return email == null ? "" : email.trim().toLowerCase();
     }
 
+    public static boolean isValidEmail(String normalizedEmail) {
+        return normalizedEmail != null && normalizedEmail.length() <= 150 && EMAIL.matcher(normalizedEmail).matches();
+    }
+
     private static ResponseStatusException bad(String msg) {
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, msg);
     }

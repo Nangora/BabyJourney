@@ -2,7 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { Auth } from '../auth/auth';
+import { Auth, homeFor } from '../auth/auth';
 
 export interface PregnancyProfile {
   dueDate: string;
@@ -105,6 +105,11 @@ export class PregnancyService {
 
   // Sau khi đăng nhập: chưa có hồ sơ thai kỳ thì sang /onboarding, có rồi thì vào bảng điều khiển
   redirectAfterLogin(): void {
+    const role = this.auth.currentUser()?.role;
+    if (role && role !== 'USER') {
+      this.router.navigateByUrl(homeFor(role));
+      return;
+    }
     this.load().subscribe({
       next: (p) => this.router.navigateByUrl(p || this.isSkipped() ? '/dashboard' : '/onboarding'),
       error: () => this.router.navigateByUrl('/dashboard')
