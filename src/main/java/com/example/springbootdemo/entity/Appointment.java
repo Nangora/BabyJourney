@@ -29,10 +29,22 @@ public class Appointment {
     private LocalDateTime appointmentTime;
 
     @Column(nullable = false, length = 20)
-    private String status; // PENDING / CONFIRMED / CANCELLED
+    private String status;
 
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String notes;
+
+    @Column(name = "appointment_type", length = 50)
+    private String appointmentType;
+
+    @Column(name = "result_notes", columnDefinition = "NVARCHAR(MAX)")
+    private String resultNotes;
+
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
+
+    @Column(name = "remind_before_minutes")
+    private Integer remindBeforeMinutes;
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;

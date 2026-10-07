@@ -9,9 +9,12 @@
       @if (p(); as prof) {
         <span class="stage">Tuần {{ prof.currentWeek }} • {{ trimesterText() }}</span>
       }
-      <button type="button" class="icon-btn" aria-label="Thông báo" title="Chưa có thông báo">
+      <a routerLink="/notifications" class="icon-btn" aria-label="Thông báo">
         <app-icon name="bell" [size]="20" />
-      </button>
+        @if (unread() > 0) {
+          <span class="badge">{{ unread() }}</span>
+        }
+      </a>
 
       <details #menu class="avatar-menu">
         <summary aria-label="Tài khoản">{{ initial() }}</summary>
@@ -43,7 +46,7 @@
         </div>
       }
 
-      <p class="foot-links"><a routerLink="/profile">Cài đặt</a> · <a routerLink="/help">Trợ giúp & hỗ trợ</a></p>
+      <p class="foot-links"><a routerLink="/settings">Cài đặt</a> · <a routerLink="/help">Trợ giúp & hỗ trợ</a></p>
     </aside>
 
     <main class="main"><router-outlet /></main>

@@ -1,4 +1,3 @@
-// MoodEntry.java
 package com.example.springbootdemo.entity;
 
 import jakarta.persistence.*;
@@ -28,4 +27,7 @@ public class MoodEntry {
 
     @Column(nullable = false, length = 20)
     private String mood;
+
+    @Column(length = 500)
+    private String note;
 }

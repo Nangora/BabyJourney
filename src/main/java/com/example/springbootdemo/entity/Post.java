@@ -27,6 +27,19 @@ public class Post {
     @Column(nullable = false, columnDefinition = "NVARCHAR(MAX)")
     private String content; // noi dung bai dang - khong lien quan gi den class Content o tren
 
+    @Column(length = 50)
+    private String category;
+
+    @Column(name = "is_anonymous", nullable = false)
+    private boolean anonymous;
+
+    @Column(name = "is_hidden", nullable = false)
+    private boolean hidden;
+
+    @Column(name = "post_type", nullable = false, length = 20)
+    @Builder.Default
+    private String postType = "POST";
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 }

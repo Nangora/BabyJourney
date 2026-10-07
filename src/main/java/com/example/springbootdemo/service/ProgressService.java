@@ -43,7 +43,7 @@ public class ProgressService {
                 .countByKindAndWeekFromLessThanEqualAndWeekToGreaterThanEqual("LESSON", week, week);
         long explored = userContentRepository.countExplored(userId, week);
         long days = activityLogRepository.countPracticeDays(userId, monday, sunday);
-        long journals = journalRepository.countByUser_IdAndEntryDateBetween(userId, monday, sunday);
+        long journals = journalRepository.countByUser_IdAndDeletedFalseAndEntryDateBetween(userId, monday, sunday);
 
         return new WeekProgress(week, (int) total, (int) explored, (int) days, 7, (int) journals);
     }
@@ -73,7 +73,7 @@ public class ProgressService {
         }
 
         items.add(new PlanItem("Ghi lại", null, "Nhật ký hằng ngày của tôi", "3 phút",
-                journalRepository.existsByUser_IdAndEntryDate(userId, today)));
+                journalRepository.existsByUser_IdAndEntryDateAndDeletedFalse(userId, today)));
 
         return new TodayView(today, items);
     }

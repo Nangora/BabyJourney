@@ -11,13 +11,19 @@ import java.util.Optional;
 
 public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long> {
 
+    List<JournalEntry> findByUser_IdAndDeletedFalseOrderByEntryDateDescIdDesc(Long userId, Pageable pageable);
+
+    List<JournalEntry> findByUser_IdAndMoodAndDeletedFalseOrderByEntryDateDescIdDesc(Long userId, String mood, Pageable pageable);
+
+    Optional<JournalEntry> findByIdAndUser_IdAndDeletedFalse(Long id, Long userId);
+
+    long countByUser_IdAndDeletedFalseAndEntryDateBetween(Long userId, LocalDate from, LocalDate to);
+
+    boolean existsByUser_IdAndEntryDateAndDeletedFalse(Long userId, LocalDate date);
+
+    @Deprecated
     List<JournalEntry> findByUser_IdOrderByEntryDateDescIdDesc(Long userId, Pageable pageable);
 
-    List<JournalEntry> findByUser_IdAndMoodOrderByEntryDateDescIdDesc(Long userId, String mood, Pageable pageable);
-
+    @Deprecated
     Optional<JournalEntry> findByIdAndUser_Id(Long id, Long userId);
-
-    long countByUser_IdAndEntryDateBetween(Long userId, LocalDate from, LocalDate to);
-
-    boolean existsByUser_IdAndEntryDate(Long userId, LocalDate date);
 }

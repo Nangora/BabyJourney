@@ -21,16 +21,13 @@ public class Content {
     @Column(nullable = false, length = 200)
     private String title;
 
-    // Định dạng: ARTICLE / VISUAL_GUIDE / AUDIO / CHECKLIST / PROMPT / READING
     @Column(nullable = false, length = 20)
     private String type;
 
-    // LESSON (Kiến thức) hoặc ACTIVITY (Hoạt động)
+    @Builder.Default
     @Column(nullable = false, length = 20)
-    private String kind;
+    private String kind = "LESSON";
 
-    // Bài học: BABY_DEVELOPMENT / YOUR_BODY / EVERYDAY_WELLBEING / PREGNANCY_CARE / CONNECTION
-    // Hoạt động: MUSIC / READING / TALKING_TO_BABY / RELAXATION / MEDITATION
     @Column(length = 30)
     private String category;
 
@@ -57,6 +54,31 @@ public class Content {
 
     @Column(length = 200)
     private String tags;
+
+    @Builder.Default
+    @Column(nullable = false, length = 20)
+    private String status = "DRAFT";
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private User author;
+
+    @Builder.Default
+    @Column(name = "is_public", nullable = false)
+    private boolean isPublic = false;
+
+    @Builder.Default
+    @Column(name = "view_count", nullable = false)
+    private int viewCount = 0;
+
+    @Column(name = "source_references", columnDefinition = "NVARCHAR(MAX)")
+    private String sourceReferences;
+
+    @Column(name = "rejection_reason", length = 500)
+    private String rejectionReason;
+
+    @Column(name = "published_at")
+    private LocalDateTime publishedAt;
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;

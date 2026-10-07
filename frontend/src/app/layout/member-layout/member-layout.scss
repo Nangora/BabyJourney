@@ -13,10 +13,16 @@
 .stage { font-size: 13px; color: var(--muted); }
 
 .icon-btn {
-  width: 38px; height: 38px; border: 0; border-radius: 50%; background: transparent; color: var(--ink);
-  display: grid; place-items: center; cursor: pointer;
+  position: relative; width: 38px; height: 38px; border: 0; border-radius: 50%;
+  background: transparent; color: var(--ink); display: grid; place-items: center;
+  cursor: pointer; text-decoration: none;
 }
 .icon-btn:hover { background: var(--tint); }
+.badge {
+  position: absolute; top: 2px; right: 2px; min-width: 16px; height: 16px;
+  padding: 0 4px; border-radius: 99px; background: #e53935; color: #fff;
+  font-size: 10px; font-weight: 700; line-height: 16px; text-align: center;
+}
 
 .avatar-menu { position: relative; }
 .avatar-menu summary {

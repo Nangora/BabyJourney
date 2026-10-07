@@ -18,6 +18,7 @@ public interface ContentRepository extends JpaRepository<Content, Long> {
               and c.weekFrom <= :wMax and c.weekTo >= :wMin
               and (:q = '' or lower(c.title) like lower(concat('%', :q, '%'))
                            or lower(c.description) like lower(concat('%', :q, '%')))
+              and c.status = 'PUBLISHED'
             order by c.weekFrom, c.id
             """)
     List<Content> search(@Param("kind") String kind,
@@ -26,5 +27,25 @@ public interface ContentRepository extends JpaRepository<Content, Long> {
                          @Param("wMax") int wMax,
                          @Param("q") String q);
 
+    @Query("""
+            select c from Content c
+            where (:kind = '' or c.kind = :kind)
+              and (:category = '' or c.category = :category)
+              and (:status = '' or c.status = :status)
+              and (:q = '' or lower(c.title) like lower(concat('%', :q, '%'))
+                           or lower(c.description) like lower(concat('%', :q, '%')))
+            order by c.id desc
+            """)
+    List<Content> adminSearch(@Param("kind") String kind,
+                              @Param("category") String category,
+                              @Param("status") String status,
+                              @Param("q") String q);
+
+    List<Content> findByAuthor_IdOrderByIdDesc(Long authorId);
+
+    List<Content> findByStatusOrderByIdDesc(String status);
+
     long countByKindAndWeekFromLessThanEqualAndWeekToGreaterThanEqual(String kind, int week1, int week2);
+
+    long countByStatus(String status);
 }

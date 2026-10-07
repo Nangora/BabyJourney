@@ -32,7 +32,6 @@ public class Pregnancy {
     @Column(name = "baby_nickname", length = 100)
     private String babyNickname;
 
-    // Lưu dạng chuỗi ngăn cách bởi dấu phẩy, vd: "UNDERSTAND,CALM"
     @Column(length = 200)
     private String goals;
 
@@ -45,6 +44,20 @@ public class Pregnancy {
     @Builder.Default
     @Column(name = "email_reminder", nullable = false)
     private boolean emailReminder = false;
+
+    @Builder.Default
+    @Column(name = "number_of_babies", nullable = false)
+    private int numberOfBabies = 1;
+
+    @Builder.Default
+    @Column(nullable = false, length = 20)
+    private String status = "ACTIVE";
+
+    @Column(name = "archived_reason", length = 50)
+    private String archivedReason;
+
+    @Column(name = "archived_at")
+    private LocalDateTime archivedAt;
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;

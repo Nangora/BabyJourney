@@ -35,19 +35,28 @@ public class WellbeingService {
     public Optional<MoodView> todayMood(Long userId) {
         LocalDate today = LocalDate.now();
         return moodRepository.findByUser_IdAndEntryDate(userId, today)
-                .map(m -> new MoodView(m.getEntryDate(), m.getMood()));
+                .map(m -> new MoodView(m.getEntryDate(), m.getMood(), m.getNote()));
     }
 
     @Transactional
-    public MoodView setTodayMood(Long userId, String mood) {
+    public MoodView setTodayMood(Long userId, String mood, String note) {
         checkMood(mood);
         LocalDate today = LocalDate.now();
         MoodEntry entry = moodRepository.findByUser_IdAndEntryDate(userId, today)
                 .orElseGet(() -> MoodEntry.builder()
                         .user(userRepository.getReferenceById(userId)).entryDate(today).build());
         entry.setMood(mood);
+        if (note != null) entry.setNote(note.length() > 500 ? note.substring(0, 500) : note);
         moodRepository.save(entry);
-        return new MoodView(today, mood);
+        return new MoodView(today, mood, entry.getNote());
+    }
+
+    @Transactional(readOnly = true)
+    public List<MoodView> moodHistory(Long userId, LocalDate from, LocalDate to) {
+        if (from == null) from = LocalDate.now().minusDays(30);
+        if (to == null) to = LocalDate.now();
+        return moodRepository.findByUser_IdAndEntryDateBetweenOrderByEntryDateDesc(userId, from, to)
+                .stream().map(m -> new MoodView(m.getEntryDate(), m.getMood(), m.getNote())).toList();
     }
 
     // ---------- Nhật ký ----------
@@ -85,9 +94,9 @@ public class WellbeingService {
         List<JournalEntry> list;
         if (mood != null && !mood.isBlank()) {
             checkMood(mood);
-            list = journalRepository.findByUser_IdAndMoodOrderByEntryDateDescIdDesc(userId, mood, page);
+            list = journalRepository.findByUser_IdAndMoodAndDeletedFalseOrderByEntryDateDescIdDesc(userId, mood, page);
         } else {
-            list = journalRepository.findByUser_IdOrderByEntryDateDescIdDesc(userId, page);
+            list = journalRepository.findByUser_IdAndDeletedFalseOrderByEntryDateDescIdDesc(userId, page);
         }
         return list.stream().map(this::toView).toList();
     }
@@ -98,13 +107,34 @@ public class WellbeingService {
     }
 
     @Transactional
+    public JournalView updateJournal(Long userId, Long id, JournalRequest r) {
+        JournalEntry j = findOwned(userId, id);
+        if (r.body() != null) {
+            String body = r.body().strip();
+            if (body.isEmpty()) throw bad("Hãy viết vài dòng trước khi lưu");
+            if (body.length() > 5000) throw bad("Nội dung quá dài (tối đa 5000 ký tự)");
+            j.setBody(body);
+            j.setTitle(titleOf(body));
+        }
+        if (r.mood() != null && !r.mood().isBlank()) {
+            checkMood(r.mood());
+            j.setMood(r.mood());
+        }
+        j.setUpdatedAt(java.time.LocalDateTime.now());
+        return toView(journalRepository.save(j));
+    }
+
+    @Transactional
     public void deleteJournal(Long userId, Long id) {
-        journalRepository.delete(findOwned(userId, id));
+        JournalEntry j = findOwned(userId, id);
+        j.setDeleted(true);
+        j.setDeletedAt(java.time.LocalDateTime.now());
+        journalRepository.save(j);
     }
 
     // ---------- tiện ích ----------
     private JournalEntry findOwned(Long userId, Long id) {
-        return journalRepository.findByIdAndUser_Id(id, userId)
+        return journalRepository.findByIdAndUser_IdAndDeletedFalse(id, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy bài nhật ký"));
     }
 

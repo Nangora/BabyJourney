@@ -1,4 +1,3 @@
-// JournalEntry.java
 package com.example.springbootdemo.entity;
 
 import jakarta.persistence.*;
@@ -38,6 +37,16 @@ public class JournalEntry {
 
     @Column(length = 20)
     private String mood;
+
+    @Builder.Default
+    @Column(name = "is_deleted", nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;

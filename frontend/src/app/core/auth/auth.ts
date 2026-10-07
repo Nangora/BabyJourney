@@ -8,6 +8,11 @@ export interface UserResponse {
   email: string;
   phone: string | null;
   role: string;
+  avatarUrl: string | null;
+  dateOfBirth: string | null;
+  emailVerified: boolean;
+  currentStreak: number;
+  longestStreak: number;
   createdAt: string;
 }
 
@@ -43,6 +48,8 @@ export interface ChangePasswordRequest {
 export interface UpdateProfileRequest {
   fullName: string;
   phone: string;
+  avatarUrl?: string;
+  dateOfBirth?: string;
 }
 
 export interface MessageResponse {

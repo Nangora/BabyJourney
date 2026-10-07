@@ -11,4 +11,5 @@ public class RegisterRequest {
     private String phone;
     private String password;
     private String confirmPassword;
+    private boolean agreedTerms;
 }

@@ -15,4 +15,8 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
     @Query("select count(distinct a.completedOn) from ActivityLog a "
             + "where a.user.id = :userId and a.completedOn between :from and :to")
     long countPracticeDays(@Param("userId") Long userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
+
+    long countByUser_Id(Long userId);
+
+    long countByUser_IdAndCompletedOnBetween(Long userId, LocalDate from, LocalDate to);
 }

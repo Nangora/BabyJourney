@@ -28,6 +28,13 @@ public class Comment {
     @Column(nullable = false, columnDefinition = "NVARCHAR(MAX)")
     private String content;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
+
+    @Column(name = "is_hidden", nullable = false)
+    private boolean hidden;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 }

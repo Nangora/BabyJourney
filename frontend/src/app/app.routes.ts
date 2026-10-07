@@ -3,7 +3,6 @@ import { PublicLayout } from './layout/public-layout/public-layout';
 import { MemberLayout } from './layout/member-layout/member-layout';
 import { Landing } from './pages/landing/landing';
 import { Dashboard } from './pages/dashboard/dashboard';
-import { ComingSoon } from './pages/coming-soon/coming-soon';
 import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
 import { ForgotPassword } from './pages/forgot-password/forgot-password';
@@ -13,6 +12,17 @@ import { ChangePassword } from './pages/change-password/change-password';
 import { Onboarding } from './pages/onboarding/onboarding';
 import { authGuard } from './core/auth/auth-guard';
 import { Activities } from './pages/activities/activities';
+import { Education } from './pages/education/education';
+import { EducationDetail } from './pages/education/education-detail';
+import { Journal } from './pages/journal/journal';
+import { Schedule } from './pages/schedule/schedule';
+import { Health } from './pages/health/health';
+import { Help } from './pages/help/help';
+import { Notifications } from './pages/notifications/notifications';
+import { Settings } from './pages/settings/settings';
+import { BirthPrep } from './pages/birth-prep/birth-prep';
+import { Nutrition } from './pages/nutrition/nutrition';
+import { Gamification } from './pages/gamification/gamification';
 
 export const routes: Routes = [
   // Trang công khai: header + footer
@@ -25,11 +35,18 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: Dashboard },
-      { path: 'education', component: ComingSoon, data: { title: 'Kiến thức' } },
-      { path: 'activities', component: Activities, data: { title: 'Hoạt động' } },
-      { path: 'schedule', component: ComingSoon, data: { title: 'Lịch & tiến độ' } },
-      { path: 'journal', component: ComingSoon, data: { title: 'Tâm trạng & nhật ký' } },
-      { path: 'help', component: ComingSoon, data: { title: 'Trợ giúp & hỗ trợ' } },
+      { path: 'education', component: Education },
+      { path: 'education/:id', component: EducationDetail },
+      { path: 'activities', component: Activities },
+      { path: 'schedule', component: Schedule },
+      { path: 'journal', component: Journal },
+      { path: 'health', component: Health },
+      { path: 'help', component: Help },
+      { path: 'birth-prep', component: BirthPrep },
+      { path: 'nutrition', component: Nutrition },
+      { path: 'gamification', component: Gamification },
+      { path: 'notifications', component: Notifications },
+      { path: 'settings', component: Settings },
       { path: 'profile', component: Profile },
       { path: 'change-password', component: ChangePassword },
     ],
